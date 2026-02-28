@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import sqlite3
 import time
 
@@ -16,6 +16,9 @@ CREATE TABLE IF NOT EXISTS notes(
 """)
 db.commit()
 
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 @app.route("/notes", methods=['POST'])
 def write_notes():

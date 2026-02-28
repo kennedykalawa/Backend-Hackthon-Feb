@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notes App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1f1c2c, #928dab);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 30px;
+            width: 95%;
+            max-width: 600px;
+            color: white;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            margin-top: 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #00c9ff;
+            color: white;
+            font-weight: bold;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            background: #92fe9d;
+            color: black;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .note-box {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.15);
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: rgba(255,255,255,0.2);
+            margin: 20px 0;
+        }
+
+        @media(max-width: 500px){
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="section">
+        <h2>Create Note</h2>
+        <input type="text" id="noteText" placeholder="Write your note">
+        <button onclick="createNote()">Save</button>
+    </div>
+
+    <hr>
+
+    <div class="section">
+        <h2>Get Note</h2>
+        <input type="number" id="getId" placeholder="Enter note ID">
+        <button onclick="getNote()">Fetch</button>
+
+        <div id="noteResult" class="note-box"></div>
+    </div>
+
+    <hr>
+
+    <div class="section">
+        <h2>Delete Note</h2>
+        <input type="number" id="deleteId" placeholder="Enter note ID">
+        <button onclick="deleteNote()">Delete</button>
+    </div>
+
+</div>
+
+<script>
+async function createNote() {
+    const text = document.getElementById("noteText").value;
+
+    const response = await fetch("/notes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: text })
+    });
+
+    const data = await response.json();
+    alert(data.response || data.error);
+}
+
+async function getNote() {
+    const id = document.getElementById("getId").value;
+
+    const response = await fetch(`/notes/${id}`);
+
+    if (response.status === 404) {
+        document.getElementById("noteResult").innerHTML = "Note not found";
+        return;
+    }
+
+    const data = await response.json();
+
+    document.getElementById("noteResult").innerHTML = `
+        <strong>ID:</strong> ${data.id}<br>
+        <strong>Text:</strong> ${data.text}<br>
+        <strong>Created At:</strong> ${data.createdAt}
+    `;
+}
+
+async function deleteNote() {
+    const id = document.getElementById("deleteId").value;
+
+    const response = await fetch(`/notes/${id}`, {
+        method: "DELETE"
+    });
+
+    if (response.status === 204) {
+        alert("Deleted successfully!");
+    } else {
+        alert("Note not found");
+    }
+}
+</script>
+
+</body>
+</html>
