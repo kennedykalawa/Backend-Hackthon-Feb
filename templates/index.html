@@ -348,7 +348,7 @@
     <div class="card-header">
       <div class="card-label">
         <span class="method-pill del">DELETE</span>
-        <span class="route">/notes/:id</span>
+        <span class="route">/notes/:id(1,2,3 etc)</span>
       </div>
       <span class="card-title">Delete Note</span>
     </div>
@@ -525,7 +525,7 @@
       input.focus();
       showResult('createResult', 'ok', '<span class="rl">201 Created</span>' + data.response);
       showToast('Note saved!', 'ok');
-      loadAllNotes();
+      /* loadAllNotes(); */
     })
     .catch(function(error) {
       showResult('createResult', 'err', '<span class="rl">Error</span>' + error.message);
